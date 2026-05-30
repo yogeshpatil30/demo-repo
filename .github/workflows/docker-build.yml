@@ -38,7 +38,7 @@ jobs:
         with:
           host: 58.84.62.125
           username: Admin
-          key: ${{ LOCAL_SSH_KEY.LOCAL_SSH_KEY }}
+          key: ${{ secrets.LOCAL_SSH_KEY }}
           source: "app.tar"
           target: "~/app"
 
@@ -48,7 +48,7 @@ jobs:
         with:
           host: 58.84.62.125
           username: Admin
-          key: ${{ LOCAL_SSH_KEY.LOCAL_SSH_KEY }}
+          key: ${{ secrets.LOCAL_SSH_KEY }}
           script: |
             docker load < ~/app/app.tar
             docker stop springboot-app || true
