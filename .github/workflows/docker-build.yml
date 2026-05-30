@@ -37,7 +37,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: 58.84.62.125
-          username: Admin
+          username: admin
           key: ${{ secrets.LOCAL_SSH_KEY }}
           source: "app.tar"
           target: "~/app"
@@ -47,7 +47,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: 58.84.62.125
-          username: Admin
+          username: admin
           key: ${{ secrets.LOCAL_SSH_KEY }}
           script: |
             docker load < ~/app/app.tar
