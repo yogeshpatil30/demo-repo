@@ -1,0 +1,56 @@
+name: Build & Deploy to Local Docker
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Java
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 3. Build Spring Boot JAR
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      # 4. Build Docker image
+      - name: Build Docker image
+        run: docker build -t springboot-app .
+
+      # 5. Save Docker image as tar file
+      - name: Save Docker image
+        run: docker save springboot-app > app.tar
+
+      # 6. Copy image to local machine via SSH
+      - name: Copy image to local machine
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 58.84.62.125
+          username: Admin
+          key: ${{ LOCAL_SSH_KEY.LOCAL_SSH_KEY }}
+          source: "app.tar"
+          target: "~/app"
+
+      # 7. Deploy on local machine
+      - name: Deploy on local machine
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 58.84.62.125
+          username: Admin
+          key: ${{ LOCAL_SSH_KEY.LOCAL_SSH_KEY }}
+          script: |
+            docker load < ~/app/app.tar
+            docker stop springboot-app || true
+            docker rm springboot-app || true
+            docker run -d -p 8080:8080 --name springboot-app springboot-app
