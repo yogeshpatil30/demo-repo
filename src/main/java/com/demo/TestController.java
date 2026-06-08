@@ -11,7 +11,7 @@ public class TestController {
 	
 	 @GetMapping("/send")
 	    public String sendMessage() {
-		 	System.out.println("START");
+		 	System.out.println("START :: ---> API");
 	        return "Demo of CICD";
 	 }
 	       
